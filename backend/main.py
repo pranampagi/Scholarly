@@ -45,3 +45,34 @@ def read_resources(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     """
     resources = db.query(models.Resource).offset(skip).limit(limit).all()
     return resources
+
+@app.put("/resources/{resource_id}", response_model=schemas.Resource)
+def update_resource(resource_id: int, resource: schemas.ResourceUpdate, db: Session = Depends(get_db)):
+    """
+    Update an existing research resource by its ID.
+    Only provided fields will be updated.
+    """
+    db_resource = db.query(models.Resource).filter(models.Resource.id == resource_id).first()
+    if not db_resource:
+        raise HTTPException(status_code=404, detail="Resource not found")
+    
+    update_data = resource.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_resource, key, value)
+    
+    db.commit()
+    db.refresh(db_resource)
+    return db_resource
+
+@app.delete("/resources/{resource_id}")
+def delete_resource(resource_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a research resource from the database by its ID.
+    """
+    db_resource = db.query(models.Resource).filter(models.Resource.id == resource_id).first()
+    if not db_resource:
+        raise HTTPException(status_code=404, detail="Resource not found")
+    
+    db.delete(db_resource)
+    db.commit()
+    return {"message": "Resource deleted successfully"}
