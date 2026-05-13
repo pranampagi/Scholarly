@@ -1,40 +1,49 @@
 <script setup>
 /**
  * ResourceList component.
- * Displays a list of research resources in a responsive Bootstrap table.
- * Includes status-based badge styling.
+ * Displays a list of research resources fetched from the backend API.
  */
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { resourceService } from '../services/api'
 
-// Mock data for initial development
-const resources = ref([
-  {
-    id: 1,
-    title: "Attention Is All You Need",
-    link: "https://arxiv.org/abs/1706.03762",
-    category: "Machine Learning",
-    status: "Completed"
-  },
-  {
-    id: 2,
-    title: "Deep Residual Learning for Image Recognition",
-    link: "https://arxiv.org/abs/1512.03385",
-    category: "Computer Vision",
-    status: "In Progress"
-  },
-  {
-    id: 3,
-    title: "Innovate to eliminate: a prerequisite in NTD programmes",
-    link: "#",
-    category: "Public Health",
-    status: "Pending"
-  }
-])
+const resources = ref([])
+const error = ref(null)
+const isLoading = ref(true)
 
 /**
- * Returns the appropriate Bootstrap badge class based on the resource status.
- * @param {string} status 
- * @returns {string}
+ * Fetches data from the backend.
+ */
+const fetchResources = async () => {
+  try {
+    isLoading.value = true
+    const response = await resourceService.getAll()
+    resources.value = response.data
+    error.value = null
+  } catch (err) {
+    console.error('Failed to fetch resources:', err)
+    error.value = 'Could not connect to the server. Please ensure the backend is running.'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+/**
+ * Deletes a resource after user confirmation.
+ * @param {number} id 
+ */
+const deleteResource = async (id) => {
+  if (confirm('Are you sure you want to delete this resource?')) {
+    try {
+      await resourceService.delete(id)
+      await fetchResources() // Refresh the list
+    } catch (err) {
+      alert('Failed to delete resource.')
+    }
+  }
+}
+
+/**
+ * Returns the appropriate Bootstrap badge class based on the status.
  */
 const getStatusBadgeClass = (status) => {
   switch (status) {
@@ -44,11 +53,28 @@ const getStatusBadgeClass = (status) => {
     default: return 'bg-light text-dark'
   }
 }
+
+onMounted(fetchResources)
 </script>
 
 <template>
+  <div v-if="error" class="alert alert-danger shadow-sm rounded-4 mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
+    <button @click="fetchResources" class="btn btn-sm btn-outline-danger ms-3">Retry</button>
+  </div>
+
   <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-    <div class="table-responsive">
+    <!-- Loading Overlay -->
+    <div v-if="isLoading" class="p-5 text-center">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <div v-else-if="resources.length === 0" class="p-5 text-center text-muted">
+      <i class="bi bi-folder2-open display-4 mb-3"></i>
+      <p>No resources found. Add your first research paper!</p>
+    </div>
+
+    <div v-else class="table-responsive">
       <table class="table table-hover align-middle mb-0">
         <thead class="bg-light text-secondary small text-uppercase fw-bold">
           <tr>
@@ -59,7 +85,7 @@ const getStatusBadgeClass = (status) => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="resource in resources" :key="resource.id" class="transition-all">
+          <tr v-for="resource in resources" :key="resource.id">
             <td class="ps-4 py-3">
               <div class="fw-bold text-dark">{{ resource.title }}</div>
               <a :href="resource.link" target="_blank" class="small text-decoration-none text-primary">
@@ -78,10 +104,7 @@ const getStatusBadgeClass = (status) => {
             </td>
             <td class="py-3 text-end pe-4">
               <div class="btn-group">
-                <button class="btn btn-sm btn-outline-primary rounded-start" title="Edit">
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger rounded-end" title="Delete">
+                <button class="btn btn-sm btn-outline-danger" @click="deleteResource(resource.id)" title="Delete">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
@@ -97,17 +120,8 @@ const getStatusBadgeClass = (status) => {
 .table-hover tbody tr:hover {
   background-color: #fbfcfe;
 }
-
-.transition-all {
-  transition: all 0.2s ease;
-}
-
 .badge {
   font-weight: 500;
   font-size: 0.75rem;
-}
-
-th {
-  letter-spacing: 0.5px;
 }
 </style>

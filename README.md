@@ -22,7 +22,6 @@ Scholarly is a lightweight, full-stack application designed to help researchers 
 ├── backend/            # FastAPI application
 ├── frontend/           # Vue.js 3 application
 ├── README.md           # Project overview
-└── Scholarly Instructions.md # Implementation roadmap
 ```
 
 ## Backend Setup
@@ -68,4 +67,22 @@ The API is fully documented using Swagger UI. Once the server is running, visit 
 | `DELETE` | `/resources/{id}` | Delete a resource. |
 
 ## Frontend Setup
-*Coming soon (Step 8)*
+
+1. **Navigate to frontend directory:**
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+   The application will be available at `http://localhost:5173`.
+
+## Environment Variables
+The frontend expects the backend to be running at `http://127.0.0.1:8000`. You can configure this in `frontend/src/services/api.js`.

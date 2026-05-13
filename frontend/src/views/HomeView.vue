@@ -12,7 +12,7 @@ onMounted(() => {
   // Simulate a brief loading delay for aesthetic effect
   setTimeout(() => {
     isLoading.value = false
-  }, 800)
+  }, 200)
 })
 </script>
 
