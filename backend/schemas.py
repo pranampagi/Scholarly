@@ -2,7 +2,7 @@
 Pydantic schemas for the Scholarly application.
 Used for data validation, serialization, and API documentation.
 """
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from .enums import ResourceStatus
 
@@ -36,6 +36,4 @@ class Resource(ResourceBase):
     Used for reading data from the API.
     """
     id: int
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

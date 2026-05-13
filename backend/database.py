@@ -3,8 +3,7 @@ Database configuration for the Scholarly application.
 Sets up the SQLAlchemy engine, session, and base class.
 """
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 
 # SQLite database file path
