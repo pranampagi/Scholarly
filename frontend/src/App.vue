@@ -4,29 +4,29 @@
  * Serves as the root of the Vue component tree.
  */
 import { RouterView } from 'vue-router'
+import Navbar from './components/Navbar.vue'
 </script>
 
 <template>
-  <div class="container mt-4">
-    <header class="mb-4 text-center">
-      <h1 class="display-4 text-primary">Scholarly</h1>
-      <nav class="mt-3">
-        <router-link to="/" class="btn btn-outline-primary me-2">Home</router-link>
-        <router-link to="/add" class="btn btn-outline-primary">Add Resource</router-link>
-      </nav>
-    </header>
+  <div id="app">
+    <!-- Main Navigation -->
+    <Navbar />
 
-    <main>
-      <!-- The component matched by the current route will be rendered here -->
+    <!-- Routed Content -->
+    <main class="container">
       <RouterView />
     </main>
   </div>
 </template>
 
-<style scoped>
-/* Basic layout styling */
-header {
-  border-bottom: 1px solid #dee2e6;
-  padding-bottom: 2rem;
+<style>
+/* Global styles */
+body {
+  background-color: #f8f9fa;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#app {
+  min-height: 100vh;
 }
 </style>
