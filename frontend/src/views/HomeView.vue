@@ -3,10 +3,22 @@
  * HomeView component.
  * Displays the main dashboard and resource list.
  */
+import { ref, onMounted } from 'vue'
+import ResourceList from '../components/ResourceList.vue'
+
+const isLoading = ref(true)
+
+onMounted(() => {
+  // Simulate a brief loading delay for aesthetic effect
+  setTimeout(() => {
+    isLoading.value = false
+  }, 800)
+})
 </script>
 
 <template>
   <div class="container py-4">
+    <!-- Header Section -->
     <div class="row mb-5 align-items-center">
       <div class="col-md-8">
         <h1 class="display-5 fw-bold text-primary mb-2">My Research</h1>
@@ -19,8 +31,8 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div class="row justify-content-center mt-5">
+    <!-- Content Section -->
+    <div v-if="isLoading" class="row justify-content-center mt-5 py-5">
       <div class="col-md-6 text-center">
         <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
           <span class="visually-hidden">Loading...</span>
@@ -28,12 +40,24 @@
         <h4 class="text-muted fw-light">Fetching your research library...</h4>
       </div>
     </div>
+
+    <div v-else class="fade-in">
+      <ResourceList />
+    </div>
   </div>
 </template>
 
 <style scoped>
-/* Scoped styles for subtle improvements */
 h1 {
   letter-spacing: -1px;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
