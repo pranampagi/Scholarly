@@ -3,8 +3,17 @@
  * ResourceList component.
  * Displays a list of research resources fetched from the backend API.
  */
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { resourceService } from '../services/api'
+
+const props = defineProps({
+  filterCategory: {
+    type: String,
+    default: 'All'
+  }
+})
+
+const emit = defineEmits(['loaded'])
 
 const resources = ref([])
 const error = ref(null)
@@ -18,6 +27,7 @@ const fetchResources = async () => {
     isLoading.value = true
     const response = await resourceService.getAll()
     resources.value = response.data
+    emit('loaded', resources.value)
     error.value = null
   } catch (err) {
     console.error('Failed to fetch resources:', err)
@@ -54,6 +64,16 @@ const getStatusBadgeClass = (status) => {
   }
 }
 
+/**
+ * Computed property to filter resources based on the selected category.
+ */
+const filteredResources = computed(() => {
+  if (!props.filterCategory || props.filterCategory === 'All') {
+    return resources.value
+  }
+  return resources.value.filter(r => r.category === props.filterCategory)
+})
+
 onMounted(fetchResources)
 </script>
 
@@ -69,9 +89,9 @@ onMounted(fetchResources)
       <div class="spinner-border text-primary" role="status"></div>
     </div>
 
-    <div v-else-if="resources.length === 0" class="p-5 text-center text-muted">
-      <i class="bi bi-folder2-open display-4 mb-3"></i>
-      <p>No resources found. Add your first research paper!</p>
+    <div v-else-if="filteredResources.length === 0" class="p-5 text-center text-muted">
+      <i class="bi bi-search display-4 mb-3"></i>
+      <p>No resources found in this category.</p>
     </div>
 
     <div v-else class="table-responsive">
@@ -85,7 +105,7 @@ onMounted(fetchResources)
           </tr>
         </thead>
         <tbody>
-          <tr v-for="resource in resources" :key="resource.id">
+          <tr v-for="resource in filteredResources" :key="resource.id">
             <td class="ps-4 py-3">
               <div class="fw-bold text-dark">{{ resource.title }}</div>
               <a :href="resource.link" target="_blank" class="small text-decoration-none text-primary">

@@ -1,12 +1,14 @@
 <script setup>
 /**
  * HomeView component.
- * Displays the main dashboard and resource list.
+ * Displays the main dashboard and resource list with category filtering.
  */
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import ResourceList from '../components/ResourceList.vue'
 
 const isLoading = ref(true)
+const selectedCategory = ref('All')
+const availableCategories = ref(['All'])
 
 onMounted(() => {
   // Simulate a brief loading delay for aesthetic effect
@@ -14,17 +16,36 @@ onMounted(() => {
     isLoading.value = false
   }, 200)
 })
+
+/**
+ * Handles the loaded event from ResourceList.
+ * Extracts unique categories from the resources.
+ * @param {Array} resources 
+ */
+const handleResourcesLoaded = (resources) => {
+  const categories = resources.map(r => r.category)
+  const uniqueCategories = ['All', ...new Set(categories)]
+  availableCategories.value = uniqueCategories
+}
 </script>
 
 <template>
   <div class="container py-4">
     <!-- Header Section -->
     <div class="row mb-5 align-items-center">
-      <div class="col-md-8">
+      <div class="col-md-6">
         <h1 class="display-5 fw-bold text-primary mb-2">My Research</h1>
         <p class="lead text-secondary">Organize and track your academic resources effectively.</p>
       </div>
-      <div class="col-md-4 text-md-end">
+      <div class="col-md-6 text-md-end">
+        <div class="d-inline-flex align-items-center me-3">
+          <label class="me-2 text-secondary small fw-bold text-uppercase">Filter:</label>
+          <select v-model="selectedCategory" class="form-select form-select-sm shadow-sm rounded-pill px-3" style="width: auto; min-width: 150px;">
+            <option v-for="cat in availableCategories" :key="cat" :value="cat">
+              {{ cat }}
+            </option>
+          </select>
+        </div>
         <router-link to="/add" class="btn btn-primary btn-lg shadow-sm rounded-pill px-4">
           <i class="bi bi-plus-circle me-2"></i>New Resource
         </router-link>
@@ -42,7 +63,10 @@ onMounted(() => {
     </div>
 
     <div v-else class="fade-in">
-      <ResourceList />
+      <ResourceList 
+        :filter-category="selectedCategory" 
+        @loaded="handleResourcesLoaded"
+      />
     </div>
   </div>
 </template>
@@ -59,5 +83,10 @@ h1 {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
 }
 </style>
