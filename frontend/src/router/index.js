@@ -5,6 +5,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AddResourceView from '../views/AddResourceView.vue'
+import EditResourceView from '../views/EditResourceView.vue'
 
 const routes = [
   {
@@ -16,6 +17,11 @@ const routes = [
     path: '/add',
     name: 'add-resource',
     component: AddResourceView
+  },
+  {
+    path: '/edit/:id',
+    name: 'edit-resource',
+    component: EditResourceView
   }
 ]
 

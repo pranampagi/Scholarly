@@ -138,6 +138,9 @@ onMounted(fetchResources)
             </td>
             <td class="py-3 text-end pe-4">
               <div class="btn-group">
+                <router-link :to="`/edit/${resource.id}`" class="btn btn-sm btn-outline-primary" title="Edit">
+                  <i class="bi bi-pencil"></i>
+                </router-link>
                 <button class="btn btn-sm btn-outline-danger" @click="deleteResource(resource.id)" title="Delete">
                   <i class="bi bi-trash"></i>
                 </button>
