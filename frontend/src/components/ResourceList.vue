@@ -10,6 +10,10 @@ const props = defineProps({
   filterCategory: {
     type: String,
     default: 'All'
+  },
+  searchQuery: {
+    type: String,
+    default: ''
   }
 })
 
@@ -65,13 +69,23 @@ const getStatusBadgeClass = (status) => {
 }
 
 /**
- * Computed property to filter resources based on the selected category.
+ * Computed property to filter resources based on category and search query.
  */
 const filteredResources = computed(() => {
-  if (!props.filterCategory || props.filterCategory === 'All') {
-    return resources.value
+  let result = resources.value
+
+  // Apply Category Filter
+  if (props.filterCategory && props.filterCategory !== 'All') {
+    result = result.filter(r => r.category === props.filterCategory)
   }
-  return resources.value.filter(r => r.category === props.filterCategory)
+
+  // Apply Search Query Filter (case-insensitive)
+  if (props.searchQuery) {
+    const query = props.searchQuery.toLowerCase()
+    result = result.filter(r => r.title.toLowerCase().includes(query))
+  }
+
+  return result
 })
 
 onMounted(fetchResources)

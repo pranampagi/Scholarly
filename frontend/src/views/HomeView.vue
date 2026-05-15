@@ -1,13 +1,14 @@
 <script setup>
 /**
  * HomeView component.
- * Displays the main dashboard and resource list with category filtering.
+ * Displays the main dashboard with search and category filtering.
  */
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import ResourceList from '../components/ResourceList.vue'
 
 const isLoading = ref(true)
 const selectedCategory = ref('All')
+const searchQuery = ref('')
 const availableCategories = ref(['All'])
 
 onMounted(() => {
@@ -33,22 +34,42 @@ const handleResourcesLoaded = (resources) => {
   <div class="container py-4">
     <!-- Header Section -->
     <div class="row mb-5 align-items-center">
-      <div class="col-md-6">
+      <div class="col-lg-6 mb-4 mb-lg-0">
         <h1 class="display-5 fw-bold text-primary mb-2">My Research</h1>
         <p class="lead text-secondary">Organize and track your academic resources effectively.</p>
       </div>
-      <div class="col-md-6 text-md-end">
-        <div class="d-inline-flex align-items-center me-3">
-          <label class="me-2 text-secondary small fw-bold text-uppercase">Filter:</label>
-          <select v-model="selectedCategory" class="form-select form-select-sm shadow-sm rounded-pill px-3" style="width: auto; min-width: 150px;">
-            <option v-for="cat in availableCategories" :key="cat" :value="cat">
-              {{ cat }}
-            </option>
-          </select>
+      
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+          <div class="row g-3">
+            <!-- Search Input -->
+            <div class="col-md-7">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                  <i class="bi bi-search text-muted"></i>
+                </span>
+                <input 
+                  type="text" 
+                  v-model="searchQuery" 
+                  class="form-control border-start-0 rounded-end-pill px-3" 
+                  placeholder="Search resources by title..."
+                >
+              </div>
+            </div>
+            
+            <!-- Category Filter -->
+            <div class="col-md-5 d-flex gap-2">
+              <select v-model="selectedCategory" class="form-select shadow-none rounded-pill px-3">
+                <option v-for="cat in availableCategories" :key="cat" :value="cat">
+                  {{ cat }}
+                </option>
+              </select>
+              <router-link to="/add" class="btn btn-primary rounded-circle shadow-sm flex-shrink-0" title="Add New Resource" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-plus-lg"></i>
+              </router-link>
+            </div>
+          </div>
         </div>
-        <router-link to="/add" class="btn btn-primary btn-lg shadow-sm rounded-pill px-4">
-          <i class="bi bi-plus-circle me-2"></i>New Resource
-        </router-link>
       </div>
     </div>
 
@@ -65,6 +86,7 @@ const handleResourcesLoaded = (resources) => {
     <div v-else class="fade-in">
       <ResourceList 
         :filter-category="selectedCategory" 
+        :search-query="searchQuery"
         @loaded="handleResourcesLoaded"
       />
     </div>
@@ -85,8 +107,12 @@ h1 {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.form-select:focus {
+.input-group-text, .form-control, .form-select {
+  border-color: #dee2e6;
+}
+
+.form-control:focus, .form-select:focus {
   border-color: #0d6efd;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+  box-shadow: none;
 }
 </style>
