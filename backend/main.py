@@ -2,7 +2,7 @@
 Main entry point for the Scholarly FastAPI application.
 This module initializes the FastAPI app and defines the core routes.
 """
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
@@ -23,14 +23,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+api_router = APIRouter()
+
+@api_router.get("/")
 def read_root():
     """
     Root endpoint that returns a welcome message.
     """
     return {"message": "Hello from Scholarly API"}
 
-@app.post("/resources/", response_model=schemas.Resource)
+@api_router.post("/resources/", response_model=schemas.Resource)
 def create_resource(resource: schemas.ResourceCreate, db: Session = Depends(get_db)):
     """
     Create a new research resource in the database.
@@ -46,7 +48,7 @@ def create_resource(resource: schemas.ResourceCreate, db: Session = Depends(get_
     db.refresh(db_resource)
     return db_resource
 
-@app.get("/resources/", response_model=List[schemas.Resource])
+@api_router.get("/resources/", response_model=List[schemas.Resource])
 def read_resources(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     Retrieve a list of research resources from the database.
@@ -55,7 +57,7 @@ def read_resources(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     resources = db.query(models.Resource).offset(skip).limit(limit).all()
     return resources
 
-@app.put("/resources/{resource_id}", response_model=schemas.Resource)
+@api_router.put("/resources/{resource_id}", response_model=schemas.Resource)
 def update_resource(resource_id: int, resource: schemas.ResourceUpdate, db: Session = Depends(get_db)):
     """
     Update an existing research resource by its ID.
@@ -73,7 +75,7 @@ def update_resource(resource_id: int, resource: schemas.ResourceUpdate, db: Sess
     db.refresh(db_resource)
     return db_resource
 
-@app.delete("/resources/{resource_id}")
+@api_router.delete("/resources/{resource_id}")
 def delete_resource(resource_id: int, db: Session = Depends(get_db)):
     """
     Delete a research resource from the database by its ID.
@@ -86,7 +88,7 @@ def delete_resource(resource_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Resource deleted successfully"}
 
-@app.get("/stats/")
+@api_router.get("/stats/")
 def get_stats(db: Session = Depends(get_db)):
     """
     Retrieve statistics about the research resources.
@@ -112,3 +114,9 @@ def get_stats(db: Session = Depends(get_db)):
             stats["by_status"][r.status] += 1
             
     return stats
+
+# Mount the router at the root for local development
+app.include_router(api_router)
+
+# Mount the router under /api for Vercel routing compatibility
+app.include_router(api_router, prefix="/api")
