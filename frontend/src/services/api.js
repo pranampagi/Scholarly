@@ -4,7 +4,9 @@
  */
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.DEV 
+const isDev = import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+
+const API_BASE_URL = isDev 
   ? 'http://127.0.0.1:8000/' 
   : '/api/'
 
