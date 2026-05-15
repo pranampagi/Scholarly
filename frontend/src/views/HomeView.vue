@@ -12,10 +12,12 @@ const searchQuery = ref('')
 const availableCategories = ref(['All'])
 
 onMounted(() => {
-  // Simulate a brief loading delay for aesthetic effect
-  setTimeout(() => {
-    isLoading.value = false
-  }, 200)
+  isLoading.value = false
+
+  // // Simulate a brief loading delay for aesthetic effect
+  // setTimeout(() => {
+  //   isLoading.value = false
+  // }, 200)
 })
 
 /**

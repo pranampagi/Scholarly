@@ -5,8 +5,8 @@
 import axios from 'axios'
 
 const API_BASE_URL = import.meta.env.DEV 
-  ? 'http://127.0.0.1:8000' 
-  : '/api'
+  ? 'http://127.0.0.1:8000/' 
+  : '/api/'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -21,7 +21,7 @@ export const resourceService = {
    * @returns {Promise}
    */
   getAll() {
-    return api.get('/resources/')
+    return api.get('resources/')
   },
 
   /**
@@ -30,7 +30,7 @@ export const resourceService = {
    * @returns {Promise}
    */
   create(data) {
-    return api.post('/resources/', data)
+    return api.post('resources/', data)
   },
 
   /**
@@ -40,7 +40,7 @@ export const resourceService = {
    * @returns {Promise}
    */
   update(id, data) {
-    return api.put(`/resources/${id}`, data)
+    return api.put(`resources/${id}`, data)
   },
 
   /**
@@ -49,7 +49,15 @@ export const resourceService = {
    * @returns {Promise}
    */
   delete(id) {
-    return api.delete(`/resources/${id}`)
+    return api.delete(`resources/${id}`)
+  },
+
+  /**
+   * Fetches library statistics.
+   * @returns {Promise}
+   */
+  getStats() {
+    return api.get('stats/')
   }
 }
 
