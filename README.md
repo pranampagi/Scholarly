@@ -1,88 +1,86 @@
-# Scholarly: Research & Study Tracker
+# 🎓 Scholarly: Research & Study Tracker
 
-Scholarly is a lightweight, full-stack application designed to help researchers and students organize their academic resources.
+**Scholarly** is a professional, full-stack application designed to help researchers, students, and lifelong learners organize their academic resources. Effortlessly track research papers, categorize them by domain (e.g., Machine Learning, GATE CS), and manage your study progress with a modern, aesthetic dashboard.
 
-## Features
-- Track research papers
-- Categorize by domain
-- Manage study notes
-- Status tracking (Pending, In Progress, Completed)
+---
 
-## Tech Stack
-- **Backend:** FastAPI (Python)
-- **Frontend:** Vue.js 3
-- **Styling:** Bootstrap 5
-- **Database:** SQLite (Development) / PostgreSQL (Production)
-- **CI/CD:** GitHub Actions
-- **Hosting:** Vercel
+## 🌟 Key Features
 
-## Project Structure
-```
+- **Resource Management:** Add, edit, and delete research papers or study links.
+- **Dynamic Filtering:** Instantly filter your library by category (discovered dynamically from your data).
+- **Real-time Search:** Find any resource by title with a lightning-fast search bar.
+- **Status Tracking:** Visual badges for *Pending*, *In Progress*, and *Completed* items.
+- **Responsive Design:** Premium UI built with Bootstrap 5, fully optimized for mobile and desktop.
+- **Statistics API:** Built-in analytics endpoint to track your library growth.
+
+---
+
+## 🛠 Tech Stack
+
+- **Backend:** [FastAPI](https://fastapi.tiangolo.com/) (Python 3.11)
+- **Frontend:** [Vue.js 3](https://vuejs.org/) (Vite)
+- **Styling:** [Bootstrap 5](https://getbootstrap.com/) + [Bootstrap Icons](https://icons.getbootstrap.com/)
+- **Database:** SQLite (Local) / PostgreSQL (Production)
+- **CI/CD:** [GitHub Actions](https://github.com/features/actions)
+- **Deployment:** [Vercel](https://vercel.com/) (Optimized for Monorepos)
+
+---
+
+## 📂 Project Structure
+
+```text
 .
-├── backend/            # FastAPI application
-├── frontend/           # Vue.js 3 application
-├── README.md           # Project overview
+├── .github/workflows/  # CI/CD pipeline (Testing & Build)
+├── backend/            # FastAPI source code & Unit tests
+├── frontend/           # Vue.js 3 dashboard (Vite)
+├── vercel.json         # Production deployment config
+└── scholarly.db        # Local SQLite database
 ```
 
-## Backend Setup
+---
 
-1. **Navigate to backend directory:**
-   ```bash
-   cd backend
-   ```
+## 🚀 Quick Start
 
-2. **Create and activate virtual environment:**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
+### Backend (API)
+1. `cd backend`
+2. `python -m venv .venv && source .venv/bin/activate`
+3. `pip install -r requirements.txt`
+4. `uvicorn main:app --reload`
+   - *API Docs:* `http://127.0.0.1:8000/docs`
 
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Frontend (Dashboard)
+1. `cd frontend`
+2. `npm install`
+3. `npm run dev`
+   - *Dashboard:* `http://localhost:5173`
 
-4. **Run the development server:**
-   ```bash
-   uvicorn main:app --reload
-   ```
-   The API will be available at `http://127.0.0.1:8000`.
-   Explore the interactive documentation at `http://127.0.0.1:8000/docs`.
+---
 
-5. **Run tests:**
-   ```bash
-   python3 -m pytest tests/test_main.py
-   ```
+## 📡 API Documentation
 
-## API Endpoints
-
-The API is fully documented using Swagger UI. Once the server is running, visit `http://127.0.0.1:8000/docs`.
-
-### Resources
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
 | `GET` | `/resources/` | List all research resources (paginated). |
 | `POST` | `/resources/` | Create a new research resource. |
-| `PUT` | `/resources/{id}` | Update an existing resource. |
-| `DELETE` | `/resources/{id}` | Delete a resource. |
+| `PUT` | `/resources/{id}` | Update an existing resource details. |
+| `DELETE` | `/resources/{id}` | Remove a resource from the library. |
+| `GET` | `/stats/` | **[New]** Get library stats by category/status. |
 
-## Frontend Setup
+---
 
-1. **Navigate to frontend directory:**
-   ```bash
-   cd frontend
-   ```
+## ⚙️ CI/CD & Deployment
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### GitHub Actions
+This project includes an automated pipeline that runs on every push:
+- **Backend:** Validates all CRUD logic using `pytest`.
+- **Frontend:** Ensures the production build compiles successfully.
 
-3. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
-   The application will be available at `http://localhost:5173`.
+### Vercel Deployment
+The root `vercel.json` is pre-configured for a seamless monorepo deployment. When connected to Vercel:
+- `/api/*` requests are handled by the FastAPI server.
+- All other requests serve the static Vue.js frontend.
 
-## Environment Variables
-The frontend expects the backend to be running at `http://127.0.0.1:8000`. You can configure this in `frontend/src/services/api.js`.
+---
+
+## 📄 License
+MIT License. Feel free to use and adapt this for your own research tracking!
