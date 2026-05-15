@@ -85,3 +85,30 @@ def delete_resource(resource_id: int, db: Session = Depends(get_db)):
     db.delete(db_resource)
     db.commit()
     return {"message": "Resource deleted successfully"}
+
+@app.get("/stats/")
+def get_stats(db: Session = Depends(get_db)):
+    """
+    Retrieve statistics about the research resources.
+    Returns counts by category and status.
+    """
+    resources = db.query(models.Resource).all()
+    
+    stats = {
+        "total": len(resources),
+        "by_category": {},
+        "by_status": {
+            "Pending": 0,
+            "In Progress": 0,
+            "Completed": 0
+        }
+    }
+    
+    for r in resources:
+        # Category stats
+        stats["by_category"][r.category] = stats["by_category"].get(r.category, 0) + 1
+        # Status stats
+        if r.status in stats["by_status"]:
+            stats["by_status"][r.status] += 1
+            
+    return stats
